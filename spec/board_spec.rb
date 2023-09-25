@@ -78,8 +78,13 @@ describe Board do
 
   describe '#game_over?' do 
     context 'when board is empty' do
+      before do
+        allow(board).to receive(:game_won?).with(blue_circle).and_return(false)
+      end
+
       it 'is not game over' do
-        expect(board.game_over?('⚫')).not_to be_game_over
+        solution = board.game_over?(blue_circle)
+        expect(solution).to be_falsey
       end
     end
 
