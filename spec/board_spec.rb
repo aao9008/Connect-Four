@@ -1,4 +1,5 @@
 require_relative '../lib/board'
+require 'pry-byebug'
 
 describe Board do
   let(:yellow_circle) { described_class.new.yellow_circle }
@@ -84,60 +85,56 @@ describe Board do
 
       it 'is not game over' do
         solution = board.game_over?(blue_circle)
-        expect(solution).to be_falsey
+        expect(solution).to eq(false)
       end
     end
 
     context 'when there is a horizontal win' do
       before do
-        board.instance_variable_set(:@grid, 
-         [[nil, nil, nil, nil, nil, nil, nil],
-          [nil, nil, nil, nil, nil, nil, nil],
-          ['⚪', nil, nil, nil, nil, nil, nil],
-          ['⚫', nil, nil, nil, nil, nil, nil],
-          ['⚪', '⚫', nil, nil, nil, nil, nil],
-          ['⚪', '⚫', '⚫', '⚫', '⚫', nil, nil]])
+        grid = board.instance_variable_get(:@grid)
+        grid[2][3] = blue_circle
+        grid[2][4] = blue_circle
+        grid[2][5] = blue_circle
+        grid[2][6] = blue_circle
       end
 
       it 'is game over' do
-        expect(board.game_over?('⚫')).to be_game_over
+        expect(board.game_over?(blue_circle)).to eq(true)
       end
     end
 
     context 'when there is a vertical win' do
       before do
-        board.instance_variable_set(:@grid, 
-         [[nil, nil, nil, nil, nil, nil, nil],
-          [nil, nil, nil, nil, nil, nil, nil],
-          ['⚪', nil, nil, nil, nil, '⚪', nil],
-          ['⚫', nil, nil, nil, nil, '⚪', nil],
-          ['⚪', '⚫', nil, nil, nil, '⚪', nil],
-          ['⚪', '⚫', '⚫', nil, nil, '⚪', nil]])
+        grid = board.instance_variable_get(:@grid)
+        grid[2][0] = blue_circle
+        grid[3][0] = blue_circle
+        grid[4][0] = blue_circle
+        grid[5][0] = blue_circle
       end
 
       it 'is game over' do
-        expect(board.game_over?('⚪')).to be true
+        binding.pry
+        expect(board.game_over?(blue_circle)).to eq(true)
       end
     end
 
     context 'when there is a diagonal win' do
       before do
-        board.instance_variable_set(:@grid, 
-         [[nil, '⚫', nil, nil, nil, nil, nil],
-          ['⚫', nil, '⚫', nil, nil, nil, nil],
-          ['⚪', '⚫', nil, '⚫', nil, nil, nil],
-          ['⚫', nil, '⚫', nil, '⚫', nil, nil],
-          [nil, '⚫', nil, '⚫', nil, nil, nil],
-          ['⚪', '⚫', '⚪', nil, '⚪', nil, nil]])
+        grid = board.instance_variable_get(:@grid)
+        grid[0][0] = blue_circle
+        grid[1][1] = blue_circle
+        grid[2][2] = blue_circle
+        grid[3][3] = blue_circle
       end
 
       it 'is game over' do
-        expect(board.game_over?('⚫')).to be true
+        expect(board.game_over?(blue_circle)).to eq(true)
       end
     end
 
     context 'when board is full' do
       before do
+        allow(board).to receive(:game_won?).and_return(false)
         board.instance_variable_set(:@grid, 
          [['⚪', '⚫', '⚫', '⚫', '⚫', '⚫', '⚫'],
           ['⚫', '⚪', '⚪', '⚪', '⚪', '⚪', '⚪'],
@@ -148,7 +145,7 @@ describe Board do
       end
 
       it 'is game over' do
-        expect(board.game_over?('⚫')).to be true
+        expect(board.game_over?(blue_circle)).to eq(true)
       end
     end
   end
