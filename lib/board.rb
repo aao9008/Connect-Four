@@ -1,7 +1,6 @@
 require_relative 'markers'
 
-include Markers
-
+# Class to handle game board logic
 class Board
   include Markers
 
@@ -51,7 +50,7 @@ class Board
   # Has a player won the game
   def game_won?(token)
     # Check for horizontal win, or veritcal win, or diagonal win
-    horizontal_win?(token) || vertical_win?(token) || diagonal_win?
+    horizontal_win?(token) || vertical_win?(token) || diagonal_win?(token)
   end
 
   # Look for a horizontal 4 in a row
@@ -88,31 +87,44 @@ class Board
     end
   end
 
-  public
-  def diagonal_win?
+  # Check for a diagonal win
+  def diagonal_win?(token)
     # Create list of right and left diagonals
     diagonals = create_diagonals
 
-    
+    # Check if any diagonal in the list
+    diagonals.any? do |diagonal|
+      # Has the same token in all slots
+      diagonal.all? do |coords|
+        grid[coords[0]][coords[1]] == token
+      end
+    end
   end
 
-  # right_diag = [[d1], [d2], etc]
+  # Create list of diagonal cooridinates
   def create_diagonals
+    # List of diagonals will contain lists of diagonals
+    # Each diagonal will be a list of coordinates
     diagonals = []
 
+    # Iterate over each row
     grid.each_with_index do |row, row_idx|
+      # In each row iterate over each column
       row.each_index do |col_idx|
+        # Add the list of coordinates for a diagonal to the diagonals list
         diagonals << right_diagonal([[row_idx, col_idx]])
         diagonals << left_diagonal([[row_idx, col_idx]])
       end
     end
 
+    # Remove nil values from list
     diagonals.compact
   end
 
   # Creat list of right diagonals
   def right_diagonal(diagonal)
     # Diagonals that orginate on row 3 or column 3 are incapable of having a diagonal length of 4
+    # Return nil for diagnols that will not have a lenght of 4
     return if diagonal[-1][0] > 2 || diagonal[-1][1] > 3
 
     # Get coordinates of the next 3 slots in the diagonal
@@ -126,7 +138,8 @@ class Board
 
   # Creat list of left diagonals
   def left_diagonal(diagonal)
-    # Diagonals that orginate on row 3 or before column 3 are incapable of having a diagonal length of 4. 
+    # Diagonals that orginate on row 3 or before column 3 are incapable of having a diagonal length of 4.
+    # Return nil for diagnols that will not have a lenght of 4
     return if diagonal[-1][0] > 2 || diagonal[-1][1] < 3
 
     # Get coordinate of the next 3 slots in the diagonal
@@ -138,5 +151,3 @@ class Board
     diagonal
   end
 end
-
-Board.new.diagonal_win?
