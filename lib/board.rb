@@ -24,6 +24,16 @@ class Board
     game_won?(token) || full?
   end
 
+  def display
+    # Print each row
+    grid.each { |row| puts row.join(' ') }
+
+    # Print sperator
+    puts '-------------'
+    # Print lables for column
+    puts (1..7).to_a.join(' ')
+  end
+
   private
 
   attr_writer :grid
