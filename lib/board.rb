@@ -1,5 +1,7 @@
 require_relative 'markers'
 
+include Markers
+
 class Board
   include Markers
 
@@ -49,14 +51,92 @@ class Board
   # Has a player won the game
   def game_won?(token)
     # Check for horizontal win, or veritcal win, or diagonal win
-    horizontal_win?(token)
+    horizontal_win?(token) || vertical_win?(token) || diagonal_win?
   end
 
+  # Look for a horizontal 4 in a row
   def horizontal_win?(token)
+    # Look at each row
     grid.each do |row|
+      # Iterate over 4 slots in a given row
       row.each_cons(4) do |four_slots|
+        # If all 4 slots are the same player token, there is 4 in a row and return true
         return true if four_slots.all? { |slot| slot == token }
       end
     end
+
+    false
+  end
+
+  # Look for a vertical 4 in a row
+  def vertical_win?(token, column = 0, rows = [0, 1, 2, 3])
+    # Exit function once column 7 is reached.
+    return false if column == 7
+
+    # Check the tokens in a column for the given set of rows
+    return true if rows.all? { |row| grid[row][column] == token }
+
+    # Shift set of rows by one.
+    rows.map! { |row| row += 1 }
+
+    # Set of rows exceeds game board size, move on to the next column
+    if rows == [3, 4, 5, 6]
+      vertical_win?(token, column + 1)
+    # Edge of board not reached, move on to next set of 4 rows.
+    else
+      vertical_win?(token, column, rows)
+    end
+  end
+
+  public
+  def diagonal_win?
+    # Create list of right and left diagonals
+    diagonals = create_diagonals
+
+    
+  end
+
+  # right_diag = [[d1], [d2], etc]
+  def create_diagonals
+    diagonals = []
+
+    grid.each_with_index do |row, row_idx|
+      row.each_index do |col_idx|
+        diagonals << right_diagonal([[row_idx, col_idx]])
+        diagonals << left_diagonal([[row_idx, col_idx]])
+      end
+    end
+
+    diagonals.compact
+  end
+
+  # Creat list of right diagonals
+  def right_diagonal(diagonal)
+    # Diagonals that orginate on row 3 or column 3 are incapable of having a diagonal length of 4
+    return if diagonal[-1][0] > 2 || diagonal[-1][1] > 3
+
+    # Get coordinates of the next 3 slots in the diagonal
+    3.times do
+      diagonal << [diagonal[-1][0] + 1, diagonal[-1][1] + 1]
+    end
+
+    # Return list of all slot coordinates in the diagonal
+    diagonal
+  end
+
+  # Creat list of left diagonals
+  def left_diagonal(diagonal)
+    # Diagonals that orginate on row 3 or before column 3 are incapable of having a diagonal length of 4. 
+    return if diagonal[-1][0] > 2 || diagonal[-1][1] < 3
+
+    # Get coordinate of the next 3 slots in the diagonal
+    3.times do
+      diagonal << [diagonal[-1][0] + 1, diagonal[-1][1] - 1]
+    end
+
+    # Return list of all slot coordinates in the diagonal
+    diagonal
   end
 end
+
+Board.new.diagonal_win?

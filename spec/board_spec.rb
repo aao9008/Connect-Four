@@ -106,25 +106,38 @@ describe Board do
     context 'when there is a vertical win' do
       before do
         grid = board.instance_variable_get(:@grid)
-        grid[2][0] = blue_circle
-        grid[3][0] = blue_circle
-        grid[4][0] = blue_circle
-        grid[5][0] = blue_circle
+        grid[2][1] = blue_circle
+        grid[3][1] = blue_circle
+        grid[4][1] = blue_circle
+        grid[5][1] = blue_circle
       end
 
       it 'is game over' do
-        binding.pry
         expect(board.game_over?(blue_circle)).to eq(true)
       end
     end
 
-    context 'when there is a diagonal win' do
+    context 'when there is a right diagonal win' do
       before do
         grid = board.instance_variable_get(:@grid)
         grid[0][0] = blue_circle
         grid[1][1] = blue_circle
         grid[2][2] = blue_circle
         grid[3][3] = blue_circle
+      end
+
+      it 'is game over' do
+        expect(board.game_over?(blue_circle)).to eq(true)
+      end
+    end
+
+    context 'when there is a left diagonal win' do
+      before do
+        grid = board.instance_variable_get(:@grid)
+        grid[0][4] = blue_circle
+        grid[1][3] = blue_circle
+        grid[2][2] = blue_circle
+        grid[3][1] = blue_circle
       end
 
       it 'is game over' do
