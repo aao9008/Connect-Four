@@ -24,6 +24,21 @@ class Board
     game_won?(token) || full?
   end
 
+  # Check if board has any empty slots left, function returns true or false
+  def full?
+    # Check all rows in the board
+    grid.all? do |row|
+      # Check each column/slot in each row for a player token
+      row.all? { |column| column != empty_circle }
+    end
+  end
+
+  # Has a player won the game
+  def game_won?(token)
+    # Check for horizontal win, or veritcal win, or diagonal win
+    horizontal_win?(token) || vertical_win?(token) || diagonal_win?(token)
+  end
+
   def display
     # Print each row
     grid.each { |row| puts row.join(' ') }
@@ -46,21 +61,6 @@ class Board
 
     # Token detected, move to next slot up
     find_available_row(row - 1, column)
-  end
-
-  # Check if board has any empty slots left, function returns true or false
-  def full?
-    # Check all rows in the board
-    grid.all? do |row|
-      # Check each column/slot in each row for a player token
-      row.all? { |column| column != empty_circle }
-    end
-  end
-
-  # Has a player won the game
-  def game_won?(token)
-    # Check for horizontal win, or veritcal win, or diagonal win
-    horizontal_win?(token) || vertical_win?(token) || diagonal_win?(token)
   end
 
   # Look for a horizontal 4 in a row

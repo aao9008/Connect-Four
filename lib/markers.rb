@@ -1,3 +1,4 @@
+# Contains board marker strings
 module Markers
   def yellow_circle
     "\e[33m\u25cf\e[0m"
